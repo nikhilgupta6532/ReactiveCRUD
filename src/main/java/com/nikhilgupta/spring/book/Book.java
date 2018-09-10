@@ -38,4 +38,14 @@ public class Book {
 		return "Name of book is "+name+" and author is "+author; 
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		Book oBook = (Book) obj;
+		if(oBook.getName() == this.getName()) {
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 }

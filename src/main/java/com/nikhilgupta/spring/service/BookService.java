@@ -5,16 +5,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.reactivestreams.Publisher;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import com.nikhilgupta.spring.book.Book;
+import com.nikhilgupta.spring.repository.BookRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
 public class BookService {
+	
+	@Autowired
+	private BookRepository bookRepository;
 
 	private List<Book> bookList;
 	
@@ -36,34 +42,28 @@ public class BookService {
 	public Flux<Book> getBooks() {
 		
 		System.out.println("service class method called");
-
-		Flux<Book> bookFlux = Flux.fromIterable(bookList);
-
-		return bookFlux;
+		
+		return bookRepository.getBooks(bookList);
+		
+		//Mono<List<Book>> collectList = bookFlux.collectList();
+		
 
 	}
 
 	public Mono<String> getBookByName(String bookName) {
 		
-		String author = bookList.stream().filter(book->book.getName().equals(bookName)).findFirst().get().getAuthor();
-		
-		return  Mono.just(author);
+		return bookRepository.getBookByName(bookName,bookList);
 	}
 
+	
 	public Flux<String> getBookChapters(String bookName) {
-		String[] chapters = bookList.stream()
-				.filter(book->book.getName().equals(bookName)).findFirst().get().getChapters();
-		
-		System.out.println("Chapters are " + chapters);
-		
-		return Flux.just(chapters);
+		return bookRepository.getBookByChapters(bookName,bookList);
 	}
 
 	public Mono<Book> addBook(Mono<Book> bodyToMono) {
-		return bodyToMono.flatMap(book->{
-			bookList.add(book);
-			return Mono.empty();
-		});
+		
+		return bookRepository.addBook(bodyToMono,bookList);
 	}
+
 
 }
