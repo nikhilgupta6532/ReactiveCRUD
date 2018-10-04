@@ -5,6 +5,7 @@ public class Book {
 	private String name;
 	private String author;
 	private String[] chapters;
+	private String index;
 	
 	public Book(String name, String author, String[] chapters) {
 		this.name = name;
